@@ -66,7 +66,7 @@ fun createLayout(presenter: Presenter) {
                 text = title,
                 modifier = Modifier.fillMaxWidth().background(Color(0xFFAABBCC)).wrapContentSize().padding(20.dp),
                 color = White,
-                fontSize = 24.sp
+                fontSize = 22.sp
             )
         }
         Column(

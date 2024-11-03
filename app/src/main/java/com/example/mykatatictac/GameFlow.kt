@@ -1,17 +1,13 @@
 package com.example.mykatatictac
 
-import android.util.Log
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.example.mykatatictac.model.Board
 import com.example.mykatatictac.model.Board.CellState
 import com.example.mykatatictac.types.State
 import com.example.mykatatictac.types.TurnResult
 import com.example.mykatatictac.types.UiAction
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class GameFlow(
     private val channel: Channel<UiAction>,
@@ -45,13 +41,14 @@ class GameFlow(
 
     fun initializeBoard() {
         board = Board()
+        println("=== Board initialized!")
         notifyBoardUpdated()
     }
 
     val onStateChanged: ((State) -> Unit) = {
         state = it
         stateChangeUpdate.invoke(it)
-        Log.d("GameFlow", "==== Game state changed: $state")
+        println("<-- Game state changed: $state")
     }
 
     suspend fun initGameFlow() {
@@ -61,7 +58,7 @@ class GameFlow(
         withContext(Dispatchers.Main) {
             launch {
                 for (action in channel) {
-                    Log.d("Channel", "UI action: $action")
+                    println("--> UI action: $action")
                     when (action) {
                         UiAction.Restart,
                         UiAction.NewGame -> {
@@ -70,13 +67,14 @@ class GameFlow(
                                 showResult(result)
                             }
                         }
+                        UiAction.Exit -> cancel()
                         else -> {}
                     }
                 }
                 isFlowInitialized = true
             }
             launch {
-                showWelcome() // init UI
+                showWelcome() // init first UI screen
             }
         }
     }
@@ -84,15 +82,18 @@ class GameFlow(
     private suspend fun showResult(result: TurnResult) {
         notifyBoardUpdated()
         onStateChanged.invoke(State.Result)
-        delay(3000)
+        // show additional screen
+        // delay(3000)
         notifyGameResult(result)
     }
 
     private fun notifyGameResult(result: TurnResult) {
+        println("<-- UI game Result!")
         gameResult.invoke(result)
     }
 
     private fun notifyBoardUpdated(nulState: Boolean = false) {
+        println("<-- UI board update!")
         board.getCellStates().forEachIndexed { idx, state -> itemUpdates[idx] = if (nulState) null else state }
     }
 
@@ -107,7 +108,7 @@ class GameFlow(
         isGameStarted = true
 
         for (n in channelTurnAction) {
-            Log.d("Turn", "$playerCell --> $n")
+            println("--> turn: $state [ $n ]")
 
             if (board.isDirtyCell(n)) continue
 

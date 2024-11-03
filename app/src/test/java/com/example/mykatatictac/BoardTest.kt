@@ -1,11 +1,13 @@
-package com.example.mykatatictac.model
+package com.example.mykatatictac
 
+import com.example.mykatatictac.model.Board
+import org.junit.Test
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 
 class BoardTest {
 
-    @org.junit.jupiter.api.Test
+    @Test
     fun checkTurn() {
         val board = Board()
         assertNull(board.updateBoard(1, Board.CellState.X))

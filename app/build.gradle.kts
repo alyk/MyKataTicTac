@@ -53,7 +53,7 @@ android {
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.1.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0")
     implementation(libs.androidx.graphics.shapes)
     implementation(libs.androidx.core.ktx)
@@ -68,6 +68,8 @@ dependencies {
     implementation(libs.junit.jupiter)
     testImplementation(libs.junit)
     testImplementation(libs.junit.jupiter)
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4")
+    testImplementation("io.mockk:mockk:1.13.13")
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))

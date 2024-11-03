@@ -14,6 +14,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
@@ -54,15 +55,15 @@ fun createLayout(presenter: Presenter) {
         verticalArrangement = Arrangement.Center,
         horizontalArrangement = Arrangement.Center
     ) {
-        val title = remember { presenter.screenTitle }
+        val title by remember { presenter.screenTitle }
         val items = remember { presenter.items }
-        val button = remember { presenter.actionButtonText }
+        val button by remember { presenter.actionButtonText }
 
         Column(
             Modifier.fillMaxWidth().weight(10f).padding(20.dp),
         ) {
             Text(
-                text = title.value,
+                text = title,
                 modifier = Modifier.fillMaxWidth().background(Color(0xFFAABBCC)).wrapContentSize().padding(20.dp),
                 color = White,
                 fontSize = 24.sp
@@ -95,7 +96,7 @@ fun createLayout(presenter: Presenter) {
                             presenter.sendUserAction(UiAction.NewGame)
                         }
                     ) {
-                        Text(button.value)
+                        Text(button)
                     }
                     Button(
                         modifier = Modifier.fillMaxWidth().weight(1f).padding(20.dp),

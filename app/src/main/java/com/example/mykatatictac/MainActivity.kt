@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.mykatatictac.model.Board
 import com.example.mykatatictac.presenter.Presenter
+import com.example.mykatatictac.types.UiAction
 import com.example.mykatatictac.ui.theme.MyKataTicTacTheme
 
 class MainActivity : ComponentActivity() {
@@ -44,39 +45,34 @@ class MainActivity : ComponentActivity() {
 }
 
 //@Preview(showBackground = true)
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun createLayout(presenter: Presenter) {
     val context = LocalContext.current
-    Column(
-        modifier = Modifier.fillMaxHeight(),
-        verticalArrangement = Arrangement.SpaceEvenly
+    FlowRow(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalArrangement = Arrangement.Center
     ) {
-        val t = remember { AppFlow._state }
+        val title = remember { presenter.screenTitle }
         val items = remember { presenter.items }
+        val button = remember { presenter.actionButtonText }
+
         Column(
-            Modifier.fillMaxSize().weight(1f),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
+            Modifier.fillMaxWidth().weight(10f).padding(20.dp),
         ) {
             Text(
-                text = when (t.value) {
-                    AppFlow.State.Init -> "Welcome to my TicTacToe ;)"
-                    AppFlow.State.Player1 -> "Player ONE turn! (X)"
-                    AppFlow.State.Player2 -> "Player TWO turn! (0)"
-                    AppFlow.State.Result -> "Game over. "
-                },
-                modifier = Modifier.background(Color(0xFFAABBCC)).wrapContentSize().padding(20.dp),
+                text = title.value,
+                modifier = Modifier.fillMaxWidth().background(Color(0xFFAABBCC)).wrapContentSize().padding(20.dp),
                 color = White,
                 fontSize = 24.sp
             )
         }
         Column(
-            Modifier.fillMaxSize().weight(2f),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
+            Modifier.fillMaxWidth().weight(12f),
         ) {
             Column(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -85,37 +81,34 @@ fun createLayout(presenter: Presenter) {
                 createCellRow(2, presenter, items)
             }
         }
-        Row(
-            Modifier.fillMaxSize().weight(1f),
-            horizontalArrangement = Arrangement.Center,
+        Column(
+            Modifier.fillMaxWidth().weight(10f),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Button(
-                modifier = Modifier.padding(20.dp),
-                onClick = {
-                    presenter.initializeBoard()
-                    AppFlow.go(AppFlow.State.Player1)
-                }
+            Row(
+                Modifier.fillMaxWidth()
             ) {
-                Text(
-                    text = when (t.value) {
-                        AppFlow.State.Init,
-                        AppFlow.State.Result -> "Start new game"
-
-                        AppFlow.State.Player1,
-                        AppFlow.State.Player2 -> "Restart"
-                    },
-                )
-            }
-            Button(
-                modifier = Modifier.padding(20.dp),
-                onClick = {
-                    (context as Activity).finish()
-                    AppFlow.go(AppFlow.State.Init)
+                FlowRow {
+                    Button(
+                        modifier = Modifier.fillMaxWidth().weight(1f).padding(20.dp),
+                        onClick = {
+                            presenter.sendUserAction(UiAction.NewGame)
+                        }
+                    ) {
+                        Text(button.value)
+                    }
+                    Button(
+                        modifier = Modifier.fillMaxWidth().weight(1f).padding(20.dp),
+                        onClick = {
+                            (context as Activity).finish()
+                            presenter.sendUserAction(UiAction.Exit)
+                        }
+                    ) {
+                        Text(
+                            text = "Exit"
+                        )
+                    }
                 }
-            ) {
-                Text(
-                    text = "Exit"
-                )
             }
         }
     }

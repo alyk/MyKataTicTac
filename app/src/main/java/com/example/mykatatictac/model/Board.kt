@@ -8,7 +8,7 @@ class Board {
     */
     enum class CellState { I, X, O }
 
-    private val cells: MutableList<CellState?> = (0..8).map { (null) }.toMutableList()
+    private val cells: MutableList<CellState> = (0..8).map { (CellState.I) }.toMutableList()
 
     private val triples = listOf(
         // rows
@@ -26,10 +26,10 @@ class Board {
 
     var dirtyNum = 0
 
-    private fun checkTurn(): CellState? {
+    private fun checkMatch(): CellState? {
         val match = triples.firstOrNull { triple ->
             when {
-                cells[triple[0]] == null -> false
+                cells[triple[0]] == CellState.I -> false
                 cells[triple[0]] != cells[triple[1]] -> false
                 cells[triple[1]] != cells[triple[2]] -> false
                 else -> true
@@ -38,13 +38,13 @@ class Board {
         return if (match == null) null else cells[match[0]]
     }
 
-    fun doTurn(idx: Int, state: CellState): CellState? {
+    fun updateBoard(idx: Int, state: CellState): CellState? {
         cells[idx] = state
         dirtyNum++
-        return checkTurn()
+        return checkMatch()
     }
 
-    fun getCellState(n: Int): CellState? {
+    fun getCellState(n: Int): CellState {
         return cells[n]
 
     }
@@ -53,7 +53,7 @@ class Board {
         return cells[n] == CellState.X || cells[n] == CellState.O
     }
 
-    fun getCellStates(): MutableList<CellState?> {
+    fun getCellStates(): MutableList<CellState> {
         return cells
     }
 
